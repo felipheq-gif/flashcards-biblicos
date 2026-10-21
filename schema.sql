@@ -1,0 +1,29 @@
+CREATE TABLE IF NOT EXISTS decks (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS cards (
+  id SERIAL PRIMARY KEY,
+  deck_id INT NOT NULL REFERENCES decks(id) ON DELETE CASCADE,
+  front TEXT NOT NULL,
+  back TEXT NOT NULL,
+  ref TEXT DEFAULT '',
+  theme TEXT DEFAULT '',
+  due TIMESTAMPTZ DEFAULT now(),
+  interval_days INT DEFAULT 0,
+  ease REAL DEFAULT 2.5,
+  reps INT DEFAULT 0,
+  lapses INT DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS reviews (
+  id SERIAL PRIMARY KEY,
+  card_id INT NOT NULL REFERENCES cards(id) ON DELETE CASCADE,
+  grade INT NOT NULL,
+  reviewed_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS cards_due_idx ON cards (deck_id, due);
